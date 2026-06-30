@@ -12,9 +12,6 @@ import {
   ChevronLeft, 
   ChevronRight, 
   GitBranch, 
-  Terminal, 
-  Settings, 
-  Database,
   BarChart3,
   Layers
 } from "lucide-react";
@@ -37,12 +34,6 @@ export default function WorkspaceSidebar() {
     { name: "List View", icon: ListTodo, active: false, badge: tasksCount > 0 ? String(tasksCount) : undefined },
     { name: "Analytics", icon: BarChart3, active: false },
     { name: "Calendar", icon: CalendarDays, active: false },
-  ];
-
-  const devTools = [
-    { name: "DB Console", icon: Database },
-    { name: "Environment", icon: Terminal },
-    { name: "Settings", icon: Settings },
   ];
 
   return (
@@ -106,22 +97,6 @@ export default function WorkspaceSidebar() {
           })}
         </nav>
 
-        {/* Developer Sections */}
-        <div className="p-3 space-y-1.5 border-t border-border/50 mt-4">
-          {!isCollapsed && <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest px-3 mb-2 block">DEVELOPER TOOLS</span>}
-          {devTools.map((item) => {
-            const Icon = item.icon;
-            return (
-              <button
-                key={item.name}
-                className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-muted-foreground hover:bg-muted hover:text-foreground transition-all group cursor-pointer border-l-2 border-transparent"
-              >
-                <Icon className="w-4 h-4 flex-shrink-0 transition-transform group-hover:scale-105" />
-                {!isCollapsed && <span className="truncate">{item.name}</span>}
-              </button>
-            );
-          })}
-        </div>
       </div>
 
       {/* Bottom Footer Actions */}
