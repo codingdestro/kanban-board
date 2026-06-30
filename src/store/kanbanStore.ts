@@ -1,5 +1,6 @@
 import { create } from 'zustand';
 import { Board, Task, Column, Priority, Label, User, Subtask, Comment } from '../types/kanban';
+import { getDbValue, setDbValue } from '../utils/db';
 
 // Mock Users
 export const MOCK_USERS: User[] = [
@@ -207,12 +208,10 @@ interface KanbanStore {
 
 export const useKanbanStore = create<KanbanStore>((set, get) => {
   const saveState = (updatedBoards: { [id: string]: Board }) => {
-    if (typeof window !== 'undefined') {
-      localStorage.setItem('kanban-store', JSON.stringify({
-        boards: updatedBoards,
-        activeBoardId: get().activeBoardId,
-      }));
-    }
+    setDbValue('kanban-store-data', {
+      boards: updatedBoards,
+      activeBoardId: get().activeBoardId,
+    });
   };
 
   return {
@@ -229,23 +228,19 @@ export const useKanbanStore = create<KanbanStore>((set, get) => {
     isNewTaskOpen: false,
     isShortcutsOpen: false,
 
-    hydrateStore: () => {
-      if (typeof window === 'undefined') return;
+    hydrateStore: async () => {
       try {
-        const data = localStorage.getItem('kanban-store');
-        if (data) {
-          const parsed = JSON.parse(data);
-          if (parsed.boards && parsed.activeBoardId) {
-            set({
-              boards: parsed.boards,
-              activeBoardId: parsed.activeBoardId,
-              isHydrated: true,
-            });
-            return;
-          }
+        const cached = await getDbValue<{ boards: { [id: string]: Board }; activeBoardId: string }>('kanban-store-data');
+        if (cached && cached.boards && cached.activeBoardId) {
+          set({
+            boards: cached.boards,
+            activeBoardId: cached.activeBoardId,
+            isHydrated: true,
+          });
+          return;
         }
       } catch (e) {
-        console.error('Failed to load store from localStorage', e);
+        console.error('Failed to load store from IndexedDB', e);
       }
       set({ isHydrated: true });
     },
