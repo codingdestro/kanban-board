@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import { useKanbanStore, MOCK_USERS, MOCK_LABELS } from "../store/kanbanStore";
-import { Priority, Label, User, Task } from "../types/kanban";
+import { Priority, Label, User, Task } from "@kanban/types";
 import { renderMarkdown } from "../utils/markdown";
 import { 
   X, 

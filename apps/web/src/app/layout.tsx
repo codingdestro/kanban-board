@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { Outfit, JetBrains_Mono } from "next/font/google";
-import "./globals.css";
+import "@kanban/styles";
 import { ThemeProvider } from "@/context/ThemeContext";
 import WorkspaceLayout from "@/components/WorkspaceLayout";
 

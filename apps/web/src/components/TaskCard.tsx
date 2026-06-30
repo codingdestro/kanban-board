@@ -3,7 +3,7 @@
 import React from "react";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
-import { Task, Priority } from "../types/kanban";
+import { Task, Priority } from "@kanban/types";
 import { 
   CheckSquare, 
   MessageSquare, 

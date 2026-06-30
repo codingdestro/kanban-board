@@ -39,3 +39,15 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# turborepo
+.turbo
+.turbo/*
+apps/web/.turbo
+packages/*/.turbo
+
+# electron / build
+dist
+dist/*
+out
+out/*

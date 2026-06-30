@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import { useKanbanStore } from "../store/kanbanStore";
-import { Priority } from "../types/kanban";
+import { Priority } from "@kanban/types";
 import { 
   ChevronLeft, 
   ChevronRight, 

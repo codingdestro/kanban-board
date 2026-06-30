@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { Board, Task, Column, Priority, Label, User, Subtask, Comment } from '../types/kanban';
+import { Board, Task, Column, Priority, Label, User, Subtask, Comment } from '@kanban/types';
 import { getDbValue, setDbValue } from '../utils/db';
 
 // Mock Users

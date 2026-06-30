@@ -3,7 +3,7 @@
 import React, { useState } from "react";
 import { useDroppable } from "@dnd-kit/core";
 import { SortableContext, verticalListSortingStrategy } from "@dnd-kit/sortable";
-import { Column as ColumnType, Task } from "../types/kanban";
+import { Column as ColumnType, Task } from "@kanban/types";
 import TaskCard from "./TaskCard";
 import { Plus, X, ArrowRight } from "lucide-react";
 import { useKanbanStore } from "../store/kanbanStore";

@@ -12,7 +12,7 @@ import {
   closestCorners,
 } from "@dnd-kit/core";
 import { useKanbanStore } from "../store/kanbanStore";
-import { Task, User, Label } from "../types/kanban";
+import { Task, User, Label } from "@kanban/types";
 import Column from "./Column";
 import TaskCard from "./TaskCard";
 
