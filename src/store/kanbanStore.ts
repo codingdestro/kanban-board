@@ -171,10 +171,12 @@ interface KanbanStore {
     labels: string[]; // label IDs
   };
   isHydrated: boolean;
+  currentView: 'board' | 'list' | 'analytics' | 'calendar';
   
   // Actions
   hydrateStore: () => void;
   setActiveBoardId: (id: string) => void;
+  setCurrentView: (view: 'board' | 'list' | 'analytics' | 'calendar') => void;
   addBoard: (name: string) => void;
   
   // Tasks
@@ -200,11 +202,12 @@ interface KanbanStore {
 }
 
 export const useKanbanStore = create<KanbanStore>((set, get) => {
-  const saveState = (updatedBoards: { [id: string]: Board }) => {
+  const saveState = (updatedBoards: { [id: string]: Board }, view?: 'board' | 'list' | 'analytics' | 'calendar') => {
     if (typeof window !== 'undefined') {
       localStorage.setItem('kanban-store', JSON.stringify({
         boards: updatedBoards,
         activeBoardId: get().activeBoardId,
+        currentView: view || get().currentView,
       }));
     }
   };
@@ -219,6 +222,7 @@ export const useKanbanStore = create<KanbanStore>((set, get) => {
       labels: [],
     },
     isHydrated: false,
+    currentView: 'board',
 
     hydrateStore: () => {
       if (typeof window === 'undefined') return;
@@ -230,6 +234,7 @@ export const useKanbanStore = create<KanbanStore>((set, get) => {
             set({
               boards: parsed.boards,
               activeBoardId: parsed.activeBoardId,
+              currentView: parsed.currentView || 'board',
               isHydrated: true,
             });
             return;
@@ -244,6 +249,11 @@ export const useKanbanStore = create<KanbanStore>((set, get) => {
     setActiveBoardId: (id) => {
       set({ activeBoardId: id });
       saveState(get().boards);
+    },
+
+    setCurrentView: (view) => {
+      set({ currentView: view });
+      saveState(get().boards, view);
     },
 
     addBoard: (name) => {

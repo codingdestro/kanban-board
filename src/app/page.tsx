@@ -5,11 +5,14 @@ import { useKanbanStore } from "../store/kanbanStore";
 import WorkspaceSidebar from "../components/WorkspaceSidebar";
 import WorkspaceHeader from "../components/WorkspaceHeader";
 import Board from "../components/Board";
+import ListView from "../components/ListView";
+import AnalyticsView from "../components/AnalyticsView";
+import CalendarView from "../components/CalendarView";
 import TaskDetailModal from "../components/TaskDetailModal";
 import KeyboardShortcutsModal from "../components/KeyboardShortcutsModal";
 
 export default function Home() {
-  const { hydrateStore, isHydrated } = useKanbanStore();
+  const { hydrateStore, isHydrated, currentView } = useKanbanStore();
   
   // Modals visibility states
   const [selectedTaskId, setSelectedTaskId] = useState<string | null>(null);
@@ -92,13 +95,34 @@ export default function Home() {
           onShortcutsClick={() => setShowShortcuts(true)}
         />
 
-        {/* Drag-and-drop Board Columns */}
-        <Board 
-          onTaskClick={(taskId) => {
-            setSelectedTaskId(taskId);
-            setShowNewTaskModal(false);
-          }} 
-        />
+        {/* Conditionally Render Selected View */}
+        {currentView === "board" && (
+          <Board 
+            onTaskClick={(taskId) => {
+              setSelectedTaskId(taskId);
+              setShowNewTaskModal(false);
+            }} 
+          />
+        )}
+        {currentView === "list" && (
+          <ListView 
+            onTaskClick={(taskId) => {
+              setSelectedTaskId(taskId);
+              setShowNewTaskModal(false);
+            }} 
+          />
+        )}
+        {currentView === "analytics" && (
+          <AnalyticsView />
+        )}
+        {currentView === "calendar" && (
+          <CalendarView 
+            onTaskClick={(taskId) => {
+              setSelectedTaskId(taskId);
+              setShowNewTaskModal(false);
+            }} 
+          />
+        )}
       </main>
 
       {/* Slide-over or Center Overlay modals */}

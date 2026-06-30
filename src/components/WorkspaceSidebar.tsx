@@ -21,6 +21,8 @@ export default function WorkspaceSidebar() {
   const [isCollapsed, setIsCollapsed] = useState(false);
   const boards = useKanbanStore((state) => state.boards);
   const activeBoardId = useKanbanStore((state) => state.activeBoardId);
+  const currentView = useKanbanStore((state) => state.currentView);
+  const setCurrentView = useKanbanStore((state) => state.setCurrentView);
   const activeBoard = boards[activeBoardId];
 
   // Calculate task counts
@@ -30,11 +32,11 @@ export default function WorkspaceSidebar() {
     : 0;
 
   const navItems = [
-    { name: "Board View", icon: Columns3, active: true },
-    { name: "List View", icon: ListTodo, active: false, badge: tasksCount > 0 ? String(tasksCount) : undefined },
-    { name: "Analytics", icon: BarChart3, active: false },
-    { name: "Calendar", icon: CalendarDays, active: false },
-  ];
+    { id: "board", name: "Board View", icon: Columns3, badge: undefined },
+    { id: "list", name: "List View", icon: ListTodo, badge: tasksCount > 0 ? String(tasksCount) : undefined },
+    { id: "analytics", name: "Analytics", icon: BarChart3, badge: undefined },
+    { id: "calendar", name: "Calendar", icon: CalendarDays, badge: undefined },
+  ] as const;
 
   return (
     <aside 
@@ -75,17 +77,19 @@ export default function WorkspaceSidebar() {
           {!isCollapsed && <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest px-3 mb-2 block">VIEWS</span>}
           {navItems.map((item) => {
             const Icon = item.icon;
+            const active = item.id === currentView;
             return (
               <button
-                key={item.name}
+                key={item.id}
+                onClick={() => setCurrentView(item.id)}
                 className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all group cursor-pointer relative
-                  ${item.active 
+                  ${active 
                     ? "bg-indigo-500/10 text-indigo-500 dark:text-indigo-400 border-l-2 border-indigo-500" 
                     : "text-muted-foreground hover:bg-muted hover:text-foreground border-l-2 border-transparent"
                   }
                 `}
               >
-                <Icon className={`w-4 h-4 flex-shrink-0 transition-transform group-hover:scale-105 ${item.active ? "text-indigo-500 dark:text-indigo-400" : ""}`} />
+                <Icon className={`w-4 h-4 flex-shrink-0 transition-transform group-hover:scale-105 ${active ? "text-indigo-500 dark:text-indigo-400" : ""}`} />
                 {!isCollapsed && <span className="truncate">{item.name}</span>}
                 {!isCollapsed && item.badge && (
                   <span className="ml-auto bg-muted text-muted-foreground text-xs font-semibold px-2 py-0.5 rounded-full border border-border">
