@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Outfit, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/context/ThemeContext";
+import WorkspaceLayout from "@/components/WorkspaceLayout";
 
 const outfit = Outfit({
   variable: "--font-outfit",
@@ -30,7 +31,9 @@ export default function RootLayout({
       suppressHydrationWarning
     >
       <body className="min-h-full bg-background text-foreground font-sans">
-        <ThemeProvider>{children}</ThemeProvider>
+        <ThemeProvider>
+          <WorkspaceLayout>{children}</WorkspaceLayout>
+        </ThemeProvider>
       </body>
     </html>
   );

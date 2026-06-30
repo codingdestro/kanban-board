@@ -171,12 +171,16 @@ interface KanbanStore {
     labels: string[]; // label IDs
   };
   isHydrated: boolean;
-  currentView: 'board' | 'list' | 'analytics' | 'calendar';
+  activeTaskId: string | null;
+  isNewTaskOpen: boolean;
+  isShortcutsOpen: boolean;
   
   // Actions
   hydrateStore: () => void;
   setActiveBoardId: (id: string) => void;
-  setCurrentView: (view: 'board' | 'list' | 'analytics' | 'calendar') => void;
+  setActiveTaskId: (id: string | null) => void;
+  setIsNewTaskOpen: (isOpen: boolean) => void;
+  setIsShortcutsOpen: (isOpen: boolean) => void;
   addBoard: (name: string) => void;
   
   // Tasks
@@ -202,12 +206,11 @@ interface KanbanStore {
 }
 
 export const useKanbanStore = create<KanbanStore>((set, get) => {
-  const saveState = (updatedBoards: { [id: string]: Board }, view?: 'board' | 'list' | 'analytics' | 'calendar') => {
+  const saveState = (updatedBoards: { [id: string]: Board }) => {
     if (typeof window !== 'undefined') {
       localStorage.setItem('kanban-store', JSON.stringify({
         boards: updatedBoards,
         activeBoardId: get().activeBoardId,
-        currentView: view || get().currentView,
       }));
     }
   };
@@ -222,7 +225,9 @@ export const useKanbanStore = create<KanbanStore>((set, get) => {
       labels: [],
     },
     isHydrated: false,
-    currentView: 'board',
+    activeTaskId: null,
+    isNewTaskOpen: false,
+    isShortcutsOpen: false,
 
     hydrateStore: () => {
       if (typeof window === 'undefined') return;
@@ -234,7 +239,6 @@ export const useKanbanStore = create<KanbanStore>((set, get) => {
             set({
               boards: parsed.boards,
               activeBoardId: parsed.activeBoardId,
-              currentView: parsed.currentView || 'board',
               isHydrated: true,
             });
             return;
@@ -251,10 +255,9 @@ export const useKanbanStore = create<KanbanStore>((set, get) => {
       saveState(get().boards);
     },
 
-    setCurrentView: (view) => {
-      set({ currentView: view });
-      saveState(get().boards, view);
-    },
+    setActiveTaskId: (id) => set({ activeTaskId: id }),
+    setIsNewTaskOpen: (isOpen) => set({ isNewTaskOpen: isOpen }),
+    setIsShortcutsOpen: (isOpen) => set({ isShortcutsOpen: isOpen }),
 
     addBoard: (name) => {
       const id = `b_${Date.now()}`;

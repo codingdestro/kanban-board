@@ -14,12 +14,7 @@ import {
   X
 } from "lucide-react";
 
-interface WorkspaceHeaderProps {
-  onNewTaskClick: () => void;
-  onShortcutsClick: () => void;
-}
-
-export default function WorkspaceHeader({ onNewTaskClick, onShortcutsClick }: WorkspaceHeaderProps) {
+export default function WorkspaceHeader() {
   const { 
     boards, 
     activeBoardId, 
@@ -27,6 +22,8 @@ export default function WorkspaceHeader({ onNewTaskClick, onShortcutsClick }: Wo
     addBoard,
     searchQuery, 
     setSearchQuery,
+    setIsNewTaskOpen,
+    setIsShortcutsOpen,
     filters,
     toggleFilterPriority,
     toggleFilterAssignee,
@@ -260,7 +257,7 @@ export default function WorkspaceHeader({ onNewTaskClick, onShortcutsClick }: Wo
 
         {/* Keyboard Shortcuts Trigger */}
         <button
-          onClick={onShortcutsClick}
+          onClick={() => setIsShortcutsOpen(true)}
           className="p-1.5 rounded-lg border border-border/60 hover:bg-muted text-muted-foreground hover:text-foreground cursor-pointer transition-colors"
           title="Keyboard Shortcuts"
         >
@@ -269,7 +266,7 @@ export default function WorkspaceHeader({ onNewTaskClick, onShortcutsClick }: Wo
 
         {/* Add Task Button */}
         <button
-          onClick={onNewTaskClick}
+          onClick={() => setIsNewTaskOpen(true)}
           className="flex items-center gap-1.5 bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-500 hover:to-indigo-500 text-white px-4 py-1.5 rounded-lg text-sm font-semibold cursor-pointer shadow-md shadow-indigo-500/20 active:scale-[0.98] transition-transform"
         >
           <Plus className="w-4 h-4" />

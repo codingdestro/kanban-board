@@ -1,6 +1,8 @@
 "use client";
 
 import React, { useState } from "react";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { useTheme } from "../context/ThemeContext";
 import { useKanbanStore } from "../store/kanbanStore";
 import { 
@@ -19,10 +21,9 @@ import {
 export default function WorkspaceSidebar() {
   const { theme, toggleTheme } = useTheme();
   const [isCollapsed, setIsCollapsed] = useState(false);
+  const pathname = usePathname();
   const boards = useKanbanStore((state) => state.boards);
   const activeBoardId = useKanbanStore((state) => state.activeBoardId);
-  const currentView = useKanbanStore((state) => state.currentView);
-  const setCurrentView = useKanbanStore((state) => state.setCurrentView);
   const activeBoard = boards[activeBoardId];
 
   // Calculate task counts
@@ -32,10 +33,10 @@ export default function WorkspaceSidebar() {
     : 0;
 
   const navItems = [
-    { id: "board", name: "Board View", icon: Columns3, badge: undefined },
-    { id: "list", name: "List View", icon: ListTodo, badge: tasksCount > 0 ? String(tasksCount) : undefined },
-    { id: "analytics", name: "Analytics", icon: BarChart3, badge: undefined },
-    { id: "calendar", name: "Calendar", icon: CalendarDays, badge: undefined },
+    { href: "/", name: "Board View", icon: Columns3, badge: undefined },
+    { href: "/list", name: "List View", icon: ListTodo, badge: tasksCount > 0 ? String(tasksCount) : undefined },
+    { href: "/analytics", name: "Analytics", icon: BarChart3, badge: undefined },
+    { href: "/calendar", name: "Calendar", icon: CalendarDays, badge: undefined },
   ] as const;
 
   return (
@@ -77,11 +78,11 @@ export default function WorkspaceSidebar() {
           {!isCollapsed && <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest px-3 mb-2 block">VIEWS</span>}
           {navItems.map((item) => {
             const Icon = item.icon;
-            const active = item.id === currentView;
+            const active = pathname === item.href;
             return (
-              <button
-                key={item.id}
-                onClick={() => setCurrentView(item.id)}
+              <Link
+                key={item.href}
+                href={item.href}
                 className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all group cursor-pointer relative
                   ${active 
                     ? "bg-indigo-500/10 text-indigo-500 dark:text-indigo-400 border-l-2 border-indigo-500" 
@@ -96,7 +97,7 @@ export default function WorkspaceSidebar() {
                     {item.badge}
                   </span>
                 )}
-              </button>
+              </Link>
             );
           })}
         </nav>
