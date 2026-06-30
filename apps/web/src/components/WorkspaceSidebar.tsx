@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useTheme } from "../context/ThemeContext";
@@ -21,10 +21,20 @@ import {
 export default function WorkspaceSidebar() {
   const { theme, toggleTheme } = useTheme();
   const [isCollapsed, setIsCollapsed] = useState(false);
+  const [isElectron, setIsElectron] = useState(false);
   const pathname = usePathname();
   const boards = useKanbanStore((state) => state.boards);
   const activeBoardId = useKanbanStore((state) => state.activeBoardId);
   const activeBoard = boards[activeBoardId];
+
+  // Detect Electron client-side safely
+  useEffect(() => {
+    if (typeof window !== "undefined" && window.navigator.userAgent.toLowerCase().includes("electron")) {
+      setTimeout(() => {
+        setIsElectron(true);
+      }, 0);
+    }
+  }, []);
 
   // Calculate task counts
   const tasksCount = activeBoard ? Object.keys(activeBoard.tasks).length : 0;
@@ -43,6 +53,7 @@ export default function WorkspaceSidebar() {
     <aside 
       className={`glass-panel border-r border-border h-screen flex flex-col justify-between transition-all duration-300 ease-in-out relative z-30 select-none
         ${isCollapsed ? "w-[72px]" : "w-[260px]"}
+        ${isElectron ? "pt-8" : ""}
       `}
     >
       {/* Top Header */}
