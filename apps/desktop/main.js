@@ -1,7 +1,9 @@
-const { app, BrowserWindow, Menu } = require("electron");
+const { app, BrowserWindow, Menu, ipcMain } = require("electron");
 const path = require("path");
+const fs = require("fs");
 
 const isDev = process.env.NODE_ENV === "development" || !app.isPackaged;
+const storagePath = path.join(app.getPath("userData"), "tasks-store.json");
 
 function createWindow() {
   const mainWindow = new BrowserWindow({
@@ -10,6 +12,7 @@ function createWindow() {
     webPreferences: {
       nodeIntegration: false,
       contextIsolation: true,
+      preload: path.join(__dirname, "preload.js"), // Load the IPC bridge
     },
     backgroundColor: "#070a13",
     title: "DevFlow Kanban",
@@ -17,10 +20,39 @@ function createWindow() {
   });
 
   if (isDev) {
-    mainWindow.loadURL("http://localhost:3000");
+    mainWindow.loadURL("http://localhost:5173"); // Vite dev server port
   } else {
-    mainWindow.loadFile(path.join(__dirname, "out/index.html"));
+    mainWindow.loadFile(path.join(__dirname, "dist-renderer/index.html")); // Vite production assets build
   }
+}
+
+// Set up local file persistence IPC handlers
+function setupIpcHandlers() {
+  ipcMain.handle("read-state", async () => {
+    try {
+      if (fs.existsSync(storagePath)) {
+        const data = fs.readFileSync(storagePath, "utf-8");
+        return JSON.parse(data);
+      }
+    } catch (e) {
+      console.error("Failed to read persistent JSON state from file", e);
+    }
+    return null;
+  });
+
+  ipcMain.handle("write-state", async (event, data) => {
+    try {
+      const dir = path.dirname(storagePath);
+      if (!fs.existsSync(dir)) {
+        fs.mkdirSync(dir, { recursive: true });
+      }
+      fs.writeFileSync(storagePath, JSON.stringify(data, null, 2), "utf-8");
+      return true;
+    } catch (e) {
+      console.error("Failed to write persistent JSON state to file", e);
+      return false;
+    }
+  });
 }
 
 // Set up native application menu template
@@ -92,6 +124,7 @@ function setAppMenu() {
 }
 
 app.whenReady().then(() => {
+  setupIpcHandlers();
   setAppMenu();
   createWindow();
 
