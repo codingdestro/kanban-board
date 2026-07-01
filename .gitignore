@@ -49,5 +49,7 @@ packages/*/.turbo
 # electron / build
 dist
 dist/*
+dist-renderer
+dist-renderer/*
 out
 out/*

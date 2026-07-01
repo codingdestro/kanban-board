@@ -4,21 +4,34 @@
   "private": true,
   "main": "main.js",
   "scripts": {
-    "dev": "electron .",
-    "prebuild": "rm -rf out && cp -r ../web/out ./out",
-    "build": "electron-builder",
-    "pack": "electron-builder --dir",
+    "dev": "concurrently -k -s first \"vite --port 5173\" \"electron .\"",
+    "build": "vite build && electron-builder",
+    "pack": "vite build && electron-builder --dir",
     "lint": "eslint ."
   },
   "dependencies": {
-    "@kanban/types": "workspace:*"
+    "@dnd-kit/core": "^6.3.1",
+    "@dnd-kit/sortable": "^10.0.0",
+    "@dnd-kit/utilities": "^3.2.2",
+    "@kanban/styles": "workspace:*",
+    "@kanban/types": "workspace:*",
+    "lucide-react": "^1.22.0",
+    "react": "19.2.4",
+    "react-dom": "19.2.4",
+    "zustand": "^5.0.14"
   },
   "devDependencies": {
     "@kanban/eslint-config": "workspace:*",
     "@kanban/tsconfig": "workspace:*",
-    "@kanban/web": "workspace:*",
-    "electron": "^31.0.0",
-    "electron-builder": "^24.13.3"
+    "@tailwindcss/vite": "^4.3.2",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "@vitejs/plugin-react": "^4.3.4",
+    "concurrently": "^8.2.2",
+    "electron": "^31.7.7",
+    "electron-builder": "^24.13.3",
+    "typescript": "^5",
+    "vite": "^5.4.11"
   },
   "build": {
     "appId": "com.kanban.devflow",
@@ -28,18 +41,25 @@
     },
     "files": [
       "main.js",
-      "out/**/*",
+      "preload.js",
+      "dist-renderer/**/*",
       "package.json"
     ],
     "mac": {
       "category": "public.app-category.developer-tools",
-      "target": ["dmg"]
+      "target": [
+        "dmg"
+      ]
     },
     "win": {
-      "target": ["nsis"]
+      "target": [
+        "nsis"
+      ]
     },
     "linux": {
-      "target": ["AppImage"]
+      "target": [
+        "AppImage"
+      ]
     }
   }
 }
